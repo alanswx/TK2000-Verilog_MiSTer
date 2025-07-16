@@ -61,7 +61,8 @@ V_SRC = \
 	$(RTL)/shared/keyboard.sv \
 	$(RTL)/shared/keyscans.vh \
 	$(RTL)/peripheral/disk_ii.v \
-	$(RTL)/peripheral/track_loader.v \
+	$(RTL)/peripheral/drive_ii.v \
+	$(RTL)/peripheral/floppy_track.sv \
 	$(RTL)/rom.v \
 	$(RTL)/bram.sv \
 	$(RTL)/video/video_generator.sv \

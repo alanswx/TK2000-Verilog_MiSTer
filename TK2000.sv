@@ -446,7 +446,7 @@ wire rd_pulse_s;
 tk2000 tk2000 (
 	.clock_14_i(clock_14_s),
     .reset_i(reset_s),
-    .CPU_WAIT(cpu_wait_fdd),
+    .CPU_WAIT(1'b0),
     // RAM
     .ram_addr_o(ram_addr_s),
     .ram_data_to_o(ram_data_to_s),
@@ -586,12 +586,21 @@ vga_controller_appleii vga (
 
 
 
-assign sd_rd = { sd_rd_fdd_b,sd_rd_fdd_a };
-assign sd_wr = { sd_wr_fdd_b,sd_wr_fdd_a };
-wire sd_rd_fdd_a;
-wire sd_wr_fdd_a;
-wire sd_rd_fdd_b;
-wire sd_wr_fdd_b;
+
+wire TRACK1_RAM_BUSY;
+wire [12:0] TRACK1_RAM_ADDR;
+wire [7:0] TRACK1_RAM_DI;
+wire [7:0] TRACK1_RAM_DO;
+wire TRACK1_RAM_WE;
+wire [5:0] TRACK1;
+
+wire TRACK2_RAM_BUSY;
+wire [12:0] TRACK2_RAM_ADDR;
+wire [7:0] TRACK2_RAM_DI;
+wire [7:0] TRACK2_RAM_DO;
+wire TRACK2_RAM_WE;
+wire [5:0] TRACK2;
+
 
 
 disk_ii disk(
@@ -603,216 +612,116 @@ disk_ii disk(
     .DEVICE_SELECT(~per_devsel_n_s),
 	 
     .RESET(reset_s),
+    .DISK_READY(DISK_READY),
+	 
     .A(per_addr_s),
     .D_IN(per_data_to_s),
     .D_OUT(per_data_from_s),
-	 
-	 
-    .TRACK1(track1),
-    .TRACK2(track2),
-	 
     .D1_ACTIVE(fd_disk_1),
     .D2_ACTIVE(fd_disk_2),
-    .ram_write_addr({track_sec, sd_buff_addr}),
-    .ram_di(sd_buff_dout),
-    .ram_we(sd_buff_wr & sd_ack[0]),
-    .DISK_FD_READ_DISK(fd_read_disk),
-   .DISK_FD_WRITE_DISK(fd_write_disk),
-   .DISK_FD_TRACK_ADDR(fd_track_addr),
-   .DISK_FD_DATA_IN(fd_data_in),
-   .DISK_FD_DATA_OUT(fd_data_do)
+	 
+	  //-- track buffer interface for disk 1  -- TODO
+    .TRACK1(TRACK1),
+    .TRACK1_ADDR(TRACK1_RAM_ADDR),
+    .TRACK1_DO(TRACK1_RAM_DO),
+    .TRACK1_DI(TRACK1_RAM_DI),
+    .TRACK1_WE(TRACK1_RAM_WE),
+    .TRACK1_BUSY(TRACK1_RAM_BUSY),
+    //-- track buffer interface for disk 2  -- TODO
+    .TRACK2(TRACK2),
+    .TRACK2_ADDR(TRACK2_RAM_ADDR),
+    .TRACK2_DO(TRACK2_RAM_DO),
+    .TRACK2_DI(TRACK2_RAM_DI),
+    .TRACK2_WE(TRACK2_RAM_WE),
+    .TRACK2_BUSY(TRACK2_RAM_BUSY)
+
 
     );
 
 
 
 
-wire  [5:0] track1;
-wire  [5:0] track2;
-reg   [3:0] track_sec;
-wire         cpu_wait_fdd = cpu_wait_fdd1|cpu_wait_fdd2;
-wire         cpu_wait_fdd1;
-wire         cpu_wait_fdd2;
-
-wire	fd_write_disk;
-wire	fd_read_disk;
-wire [13:0] fd_track_addr;
-wire [7:0] fd_data_in;
-wire [7:0] fd_data_in1;
-wire [7:0] fd_data_in2;
-wire [7:0] fd_data_do;
-
-
-assign fd_data_in = fd_disk_1 ? fd_data_in1 : fd_disk_2 ? fd_data_in2 : 8'h00;
-
 wire fd_disk_1;
 wire fd_disk_2;
 
+wire [1:0] DISK_READY;
+reg [1:0] DISK_CHANGE;
+reg [1:0]disk_mount;
 
-track_loader #(.drive_num('d0)) track_loader_a
-(
-    .clk(clk_sys),
-    .reset(reset_s),
-    .active(fd_disk_1),
-    .lba_fdd(sd_lba[0]),
-    .track(track1),
-    .img_mounted(img_mounted[0]),
-    .img_size(img_size),
-    .cpu_wait_fdd(cpu_wait_fdd1),
-    .sd_ack(sd_ack[0]),
-    .sd_rd(sd_rd_fdd_a),
-    .sd_wr(sd_wr_fdd_a),
-    .sd_buff_addr(sd_buff_addr),
-    .sd_buff_wr(sd_buff_wr),
-    .sd_buff_dout(sd_buff_dout),
-    .sd_buff_din(sd_buff_din[0]),
-    .fd_track_addr(fd_track_addr),
-    .fd_write_disk(fd_write_disk),
-    .fd_data_do(fd_data_do),
-    .fd_data_in(fd_data_in1)
-);
-track_loader #(.drive_num('d1)) track_loader_b
-(
-    .clk(clk_sys),
-    .reset(reset_s),
-    .active(fd_disk_2),
-    .lba_fdd(sd_lba[1]),
-    .track(track2),
-    .img_mounted(img_mounted[1]),
-    .img_size(img_size),
-    .cpu_wait_fdd(cpu_wait_fdd2),
-    .sd_ack(sd_ack[1]),
-    .sd_rd(sd_rd_fdd_b),
-    .sd_wr(sd_wr_fdd_b),
-    .sd_buff_addr(sd_buff_addr),
-    .sd_buff_wr(sd_buff_wr),
-    .sd_buff_dout(sd_buff_dout),
-    .sd_buff_din(sd_buff_din[1]),
-    .fd_track_addr(fd_track_addr),
-    .fd_write_disk(fd_write_disk),
-    .fd_data_do(fd_data_do),
-    .fd_data_in(fd_data_in2)
-);
-`ifdef OFF
-
-assign      sd_lba[0] = lba_fdd;
-wire  [5:0] track;
-reg   [3:0] track_sec;
-reg         cpu_wait_fdd = 0;
-reg  [31:0] lba_fdd;
-reg       fd_write_pending = 0;
-
-reg       fdd_mounted ;
-wire [63:0] disk_size;
-
-// when we write to the disk, we need to mark it dirty
-reg floppy_track_dirty;
 
 
 always @(posedge clk_sys) begin
-        reg       wr_state;
-        reg [5:0] cur_track;
-        reg       old_ack ;
-        reg [1:0] state;
-		  
-       if (img_mounted[0]) begin
-               //disk_mounted <= img_size != 0;
-					disk_size <= img_size;
-       end
-
-		  
-		  
-        old_ack <= sd_ack[0];
-        fdd_mounted <= fdd_mounted | img_mounted[0];
-
-        if (fd_write_disk)
-        begin
-                floppy_track_dirty<=1;
-                // reset timer
-        end
-
-        if(dd_reset) begin
-                state <= 0;
-                cpu_wait_fdd <= 0;
-                sd_rd[0] <= 0;
-                fd_write_pending<=0;
-                floppy_track_dirty<=0;
-        end
-        else case(state)
-                2'b00:  // looking for a track change or a timeout
-                if((cur_track != track) || (fdd_mounted && ~img_mounted[0])) begin
-
-
-                        fdd_mounted <= 0;
-                        if(disk_size) begin
-                                if (floppy_track_dirty)
-                                begin
-                                        $display("THIS TRACK HAS CHANGES cur_track %x track %x",cur_track,track);
-                                        track_sec <= 0;
-                                        floppy_track_dirty<=0;
-                                        lba_fdd <= 13 * cur_track;
-                                        state <= 2'b01;
-                                        sd_wr[0] <= 1;
-                                        cpu_wait_fdd <= 1;
-                                end
-                                else
-                                        state<=2'b10;
-                        end
-                end
-                2'b01:  // write data
-                begin
-                        if(~old_ack & sd_ack[0]) begin
-                                if(track_sec >= 12) sd_wr[0] <= 0;
-                                lba_fdd <= lba_fdd + 1'd1;
-                        end else if(old_ack & ~sd_ack[0]) begin
-                                track_sec <= track_sec + 1'd1;
-                                if(~sd_wr[0]) state <= 2'b10;
-                        end
-                end
-                2'b10:  // start read
-                begin
-                        cur_track <= track;
-                        track_sec <= 0;
-                        lba_fdd <= 13 * track;
-                        state <= 2'b11;
-                        sd_rd[0] <= 1;
-                        cpu_wait_fdd <= 1;
-                end
-                2'b11:  // read data
-                begin
-                        if(~old_ack & sd_ack[0]) begin
-                                if(track_sec >= 12) sd_rd[0] <= 0;
-                                lba_fdd <= lba_fdd + 1'd1;
-                        end else if(old_ack & ~sd_ack[0]) begin
-                                track_sec <= track_sec + 1'd1;
-                                if(~sd_rd[0]) state <= 2'b0;
-                                cpu_wait_fdd <= 0;
-                        end
-                end
-        endcase
+	if (img_mounted[0]) begin
+		disk_mount[0] <= img_size != 0;
+		DISK_CHANGE[0] <= ~DISK_CHANGE[0];
+		//disk_protect <= img_readonly;
+	end
 end
-wire	fd_write_disk;
-wire	fd_read_disk;
-wire [13:0] fd_track_addr;
-wire [7:0] fd_data_in;
-wire [7:0] fd_data_do;
-
-dpram #(14,8) floppy_dpram
+always @(posedge clk_sys) begin
+	if (img_mounted[1]) begin
+		disk_mount[1] <= img_size != 0;
+		DISK_CHANGE[1] <= ~DISK_CHANGE[1];
+		//disk_protect <= img_readonly;
+	end
+end
+floppy_track floppy_track_1
 (
-	.clock_a(clk_sys),
-	.address_a({track_sec, sd_buff_addr}),
-	.wren_a(sd_buff_wr & sd_ack[0]),
-	.data_a(sd_buff_dout),
-	.q_a(sd_buff_din[0]),
+   .clk(clk_sys),
+	.reset(reset_s),
 	
-	.clock_b(clk_sys),
-	.address_b(fd_track_addr),
-	.wren_b(fd_write_disk),
-	.data_b(fd_data_do),
-	.q_b(fd_data_in)
+	.ram_addr(TRACK1_RAM_ADDR),
+	.ram_di(TRACK1_RAM_DI),
+	.ram_do(TRACK1_RAM_DO),
+	.ram_we(TRACK1_RAM_WE),
+
+	
+	.track (TRACK1),
+	.busy  (TRACK1_RAM_BUSY),
+   .change(DISK_CHANGE[0]),
+   .mount (img_mounted[0]),
+   .ready  (DISK_READY[0]),
+   .active (fd_disk_1),
+
+   .sd_buff_addr (sd_buff_addr),
+   .sd_buff_dout (sd_buff_dout),
+   .sd_buff_din  (sd_buff_din[0]),
+   .sd_buff_wr   (sd_buff_wr),
+
+   .sd_lba       (sd_lba[0] ),
+   .sd_rd        (sd_rd[0]),
+   .sd_wr       ( sd_wr[0]),
+   .sd_ack       (sd_ack[0])	
 );
 
-`endif
+floppy_track floppy_track_2
+(
+   .clk(clk_sys),
+	.reset(reset_s),
+
+	.ram_addr(TRACK2_RAM_ADDR),
+	.ram_di(TRACK2_RAM_DI),
+	.ram_do(TRACK2_RAM_DO),
+	.ram_we(TRACK2_RAM_WE),
+	
+	.track (TRACK2),
+	.busy  (TRACK2_RAM_BUSY),
+   .change(DISK_CHANGE[1]),
+   .mount (disk_mount[1]),
+   .ready  (DISK_READY[1]),
+   .active (fd_disk_2),
+
+   .sd_buff_addr (sd_buff_addr),
+   .sd_buff_dout (sd_buff_dout),
+   .sd_buff_din  (sd_buff_din[1]),
+   .sd_buff_wr   (sd_buff_wr),
+
+   .sd_lba       (sd_lba[1] ),
+   .sd_rd        (sd_rd[1]),
+   .sd_wr       ( sd_wr[1]),
+   .sd_ack       (sd_ack[1])	
+);
+
+
 
 wire joy1_right_i  = ~joy1[0];
 wire joy1_left_i   = ~joy1[1];
@@ -821,15 +730,7 @@ wire joy1_up_i     = ~joy1[3];
 wire joy1_p6_i= ~joy1[4];
 wire joy1_p9_i= ~joy1[5];
 
-/*
-wire joy2_right_i = motor_phase_s[3];
-wire joy2_left_i = motor_phase_s[2];
-wire joy2_down_i = motor_phase_s[1];
-wire joy2_up_i = motor_phase_s[0];
-wire joy2_p6_i = drive_en_s;
 
- //--    joy2_p9_i    <= rd_pulse_s;
-*/
       
   assign scanlines_en_s = 2'b00;
 

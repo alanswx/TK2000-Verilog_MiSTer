@@ -18,8 +18,10 @@ set_global_assignment -name VHDL_FILE rtl/shared/ps2_iobase.vhd
 #set_global_assignment -name SYSTEMVERILOG_FILE rtl/shared/ps2_iobase.sv
 set_global_assignment -name VHDL_FILE rtl/peripheral/disk_ii_rom.vhd
 set_global_assignment -name VERILOG_FILE rtl/peripheral/disk_ii.v
-set_global_assignment -name VERILOG_FILE rtl/peripheral/track_loader.v
+set_global_assignment -name VERILOG_FILE rtl/peripheral/drive_ii.v
+set_global_assignment -name VERILOG_FILE rtl/peripheral/floppy_track.sv
 set_global_assignment -name VERILOG_FILE rtl/rom.v
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/bram.sv
 #set_global_assignment -name VHDL_FILE rtl/peripheral/spi_controller.vhd
 #set_global_assignment -name VHDL_FILE rtl/peripheral/image_control.vhd
 #set_global_assignment -name VHDL_FILE rtl/video/video_generator.vhd
