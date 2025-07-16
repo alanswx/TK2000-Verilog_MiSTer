@@ -163,10 +163,10 @@ module tk2000 (
 
     // Instance of T65 CPU
     T65 cpu6502 (
-        .mode       (2'b00),
-        .clk        (clock_14_i),
-        .enable     (CPU_EN && !CPU_WAIT),
-        .res_n      (!reset_i),
+        .Mode       (2'b00),
+        .Clk        (clock_14_i),
+        .Enable     (CPU_EN && !CPU_WAIT),
+        .Res_n (!reset_i),
         .Rdy        (1'b1),
         .Abort_n    (1'b1),
         .SO_n       (1'b1),
