@@ -261,7 +261,7 @@ module T65(
     // end code from package t65_pack
     input [1:0]   Mode;		// "00" => 6502, "01" => 65C02, "10" => 65C816
     input         Res_n;
-    input         Enable;
+    input         Enable/*verilator public_flat*/;
     input         Clk;
     input         Rdy;
     input         Abort_n;
@@ -275,11 +275,11 @@ module T65(
     output        XF;
     output        ML_n;
     output        VP_n;
-    output        VDA;
-    output        VPA;
-    output [23:0] A;
-    input [7:0]   DI;
-    output reg [7:0]  DO;
+    output        VDA/*verilator public_flat*/;
+    output        VPA/*verilator public_flat*/;
+    output [23:0] A/*verilator public_flat*/;
+    input [7:0]   DI/*verilator public_flat*/;
+    output reg [7:0]  DO/*verilator public_flat*/;
     // 6502 registers (MSB) PC, SP, P, Y, X, A (LSB)
     output [63:0] Regs;
     output [7:0]  DEBUG_I;
@@ -293,9 +293,9 @@ module T65(
    output reg PRINT; 
     
     // Registers
-    reg [15:0]    ABC;
-    reg [15:0]    X;
-    reg [15:0]    Y;
+    reg [15:0]    ABC/*verilator public_flat*/;
+    reg [15:0]    X/*verilator public_flat*/;
+    reg [15:0]    Y/*verilator public_flat*/;
     reg [7:0]     P;
     reg [7:0]     AD;
     reg [7:0]     DL;
@@ -304,14 +304,14 @@ module T65(
     reg [8:0]     BAL;
     reg [7:0]     PBR;
     reg [7:0]     DBR;
-    reg [15:0]    PC;
+    reg [15:0]    PC/*verilator public_flat*/;
     reg [15:0]    S;
     reg           EF_i;
     reg           MF_i;
     reg           XF_i;
     
     reg [7:0]     IR;
-    reg [2:0]     MCycle;
+    reg [2:0]     MCycle/*verilator public_flat*/;
     
     wire [7:0]    DO_r;
     

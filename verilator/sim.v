@@ -464,7 +464,7 @@ tk2000_rom rom (
 
 
 // 1 is monochrome
-wire 	   COLOR_LINE_CONTROL = 1'b1;//video_color_s |  (status[6] |  status[5]);  // Color or B&W mode
+wire 	   COLOR_LINE_CONTROL = video_color_s | 1'b0/* (status[6] |  status[5])*/;  // Color or B&W mode
 
 // VGA
 vga_controller_appleii vga (
