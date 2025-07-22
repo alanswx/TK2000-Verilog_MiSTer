@@ -685,6 +685,16 @@ int verilate() {
 			}
 			top->eval();
 
+			// Log 6502 instructions
+			cpu_clock = VERTOPINTERN->emu__DOT__tk2000__DOT__cpu6502__DOT__Clk;
+			bool cpu_reset = top->reset;
+			if (cpu_clock != cpu_clock_last && cpu_reset == 0) {
+
+
+				unsigned char en = VERTOPINTERN->emu__DOT__tk2000__DOT__cpu6502__DOT__Enable;
+				if (en) {
+
+
 			// AJS - put debugger here
 			unsigned char vpa = VERTOPINTERN->emu__DOT__tk2000__DOT__cpu6502__DOT__VPA;
 			unsigned char vda = VERTOPINTERN->emu__DOT__tk2000__DOT__cpu6502__DOT__VDA;
@@ -743,13 +753,14 @@ int verilate() {
 			}
 
 
-
+			}
+		}
 			
 
 
 			if (clk_sys.clk) { bus.AfterEval(); blockdevice.AfterEval(); }
 		}
-
+		
 #ifndef DISABLE_AUDIO
 		if (clk_sys.IsRising())
 		{

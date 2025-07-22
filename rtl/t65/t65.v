@@ -262,7 +262,7 @@ module T65(
     input [1:0]   Mode;		// "00" => 6502, "01" => 65C02, "10" => 65C816
     input         Res_n;
     input         Enable/*verilator public_flat*/;
-    input         Clk;
+    input         Clk/*verilator public_flat*/;
     input         Rdy;
     input         Abort_n;
     input         IRQ_n;
