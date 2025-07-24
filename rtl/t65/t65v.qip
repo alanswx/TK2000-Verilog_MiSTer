@@ -1,0 +1,4 @@
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) t65_pack.v ]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) t65_alu.v ]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) t65_mcode.v ]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) t65.v ]

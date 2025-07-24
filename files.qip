@@ -1,6 +1,6 @@
 #set_global_assignment -name VHDL_FILE "rtl/syn-multicore/multicore_top.vhd"
 set_global_assignment -name QIP_FILE "rtl/syn-multicore/pll1.qip"
-set_global_assignment -name QIP_FILE rtl/t65/t65.qip
+set_global_assignment -name QIP_FILE rtl/t65/t65v.qip
 #set_global_assignment -name VHDL_FILE rtl/tk2000.vhd
 set_global_assignment -name VERILOG_FILE rtl/tk2000.v
 #set_global_assignment -name VHDL_FILE rtl/timing_generator.vhd
@@ -14,7 +14,7 @@ set_global_assignment -name QIP_FILE rtl/ROM/tk2000_rom.qip
 #set_global_assignment -name VHDL_FILE rtl/shared/keymaps.vhd
 #set_global_assignment -name VHDL_FILE rtl/shared/keyboard.vhd
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/shared/keyboard.sv
-set_global_assignment -name VHDL_FILE rtl/shared/ps2_iobase.vhd
+#set_global_assignment -name VHDL_FILE rtl/shared/ps2_iobase.vhd
 #set_global_assignment -name SYSTEMVERILOG_FILE rtl/shared/ps2_iobase.sv
 set_global_assignment -name VHDL_FILE rtl/peripheral/disk_ii_rom.vhd
 set_global_assignment -name VERILOG_FILE rtl/peripheral/disk_ii.v
