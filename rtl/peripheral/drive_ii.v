@@ -150,7 +150,7 @@ module drive_ii(CLK_14M, CLK_2M, PHASE_ZERO, RESET, DISK_READY, D_IN, D_OUT, DIS
          CLK_2M_D <= CLK_2M;
          if (CLK_2M == 1'b1 & CLK_2M_D == 1'b0 & DISK_READY == 1'b1 & DISK_ACTIVE == 1'b1)
          begin
-            byte_delay = byte_delay - 1;
+            byte_delay = byte_delay - 2'b01;
             
             if (WRITE_MODE == 1'b0)
             begin
@@ -166,7 +166,7 @@ module drive_ii(CLK_14M, CLK_2M, PHASE_ZERO, RESET, DISK_READY, D_IN, D_OUT, DIS
                   if (track_byte_addr == 13'h19FF)
                      track_byte_addr <= {13{1'b0}};
                   else
-                     track_byte_addr <= track_byte_addr + 1;
+                     track_byte_addr <= track_byte_addr + 2'b01;
                end
                if (READ_DISK == 1'b1 & PHASE_ZERO == 1'b1)
                   reset_data_reg <= 1'b1;
@@ -181,7 +181,7 @@ module drive_ii(CLK_14M, CLK_2M, PHASE_ZERO, RESET, DISK_READY, D_IN, D_OUT, DIS
                   if (track_byte_addr == 13'h19FF)
                      track_byte_addr <= {13{1'b0}};
                   else
-                     track_byte_addr <= track_byte_addr + 1;
+                     track_byte_addr <= track_byte_addr + 2'b01;
                end
             end
          end

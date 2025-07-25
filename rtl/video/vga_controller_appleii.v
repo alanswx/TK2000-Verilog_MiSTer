@@ -87,12 +87,12 @@ module vga_controller_appleii (
             hcount <= 11'b0;
             vbl_delayed <= VBL;
             if (VBL == 1'b1) begin
-                vcount <= vcount + 1;
+                vcount <= vcount + 2'b01;
             end else begin
                 vcount <= 6'b0;
             end
         end else begin
-            hcount <= hcount + 1;
+            hcount <= hcount + 2'b01;
         end
         last_hbl <= HBL;
     end

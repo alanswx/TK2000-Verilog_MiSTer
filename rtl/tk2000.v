@@ -66,7 +66,6 @@ module tk2000 (
     output reg [7:0] kbd_rows_o,
     input wire [5:0] kbd_cols_i,
     output kbd_ctrl_o,
-    input wire keyhack,
     // Audio
     output spk_o,
     // Video
@@ -273,7 +272,6 @@ module tk2000 (
 
     // Keyboard Data
     assign kbd_data_s = {cas_i, lpt_busy_i, kbd_cols_i};
-    //assign kbd_data_s = (keyhack == 1'b0) ? {1'b0, 1'b0, 6'b100000} : {1'b0, 1'b0, 6'b000000};
 
     // Peripheral Outputs
     assign read_write_o = cpu_we_s;

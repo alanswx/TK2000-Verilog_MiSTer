@@ -283,7 +283,7 @@ wire drive_en_s;
 wire rd_pulse_s;
 
 tk2000 tk2000 (
-	.clock_14_i(clock_14_s),
+    .clock_14_i(clock_14_s),
     .reset_i(reset_s),
     .CPU_WAIT(cpu_wait_fdd),
     // RAM
@@ -339,8 +339,6 @@ tk2000 tk2000 (
     .per_addr_o(per_addr_s),
     .per_data_from_i(per_data_from_s),
     .per_data_to_o(per_data_to_s),
-	 
-	 .keyhack(1'b0),
 	 
     // Debug
     .D_cpu_pc_o(D_cpu_pc_s)

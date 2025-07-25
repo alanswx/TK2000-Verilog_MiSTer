@@ -134,9 +134,9 @@ module timing_generator (
             if (H_s[6] == 1'b0) begin
                 H_s <= 7'b1000000;
             end else begin
-                H_s <= H_s + 1;
+                H_s <= H_s + 2'b01;
                 if (H_s == 7'b1111111) begin
-                    V_s <= V_s + 1;
+                    V_s <= V_s + 2'b01;
                     if (V_s == 9'b111111111) begin
                         V_s <= 9'b011111010;
                     end

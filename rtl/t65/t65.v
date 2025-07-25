@@ -527,7 +527,7 @@ module T65(
                         Mode_r <= Mode;
                         
                         if (IRQCycle == 1'b0 & NMICycle == 1'b0)
-                            PC <= PC + 1;
+                            PC <= PC + 2'b01;
                         
                         if (IRQCycle == 1'b1 | NMICycle == 1'b1)
                             IR <= 8'b00000000;
@@ -546,18 +546,18 @@ module T65(
                         Set_Addr_To_r <= Set_Addr_To;
                     
                     if (Inc_S == 1'b1)
-                        S <= S + 1;
+                        S <= S + 2'b01;
                     if (Dec_S == 1'b1 & RstCycle == 1'b0)
-                        S <= S - 1;
+                        S <= S - 2'b01;
                     
                     if (IR == 8'b00000000 & MCycle == 3'b001 & IRQCycle == 1'b0 & NMICycle == 1'b0)
-                        PC <= PC + 1;
+                        PC <= PC + 2'b01;
                     //
                     // jump control logic
                     //
                     case (Jump)
                         2'b01 :
-                            PC <= PC + 1;
+                            PC <= PC + 2'b01;
                         2'b10 :
                             PC <= ({DI, DL});
                         2'b11 :
@@ -565,9 +565,9 @@ module T65(
                                 if (PCAdder[8] == 1'b1)
                                 begin
                                     if (DL[7] == 1'b0)
-                                        PC[15:8] <= PC[15:8] + 1;
+                                        PC[15:8] <= PC[15:8] + 2'b01;
                                     else
-                                        PC[15:8] <= PC[15:8] - 1;
+                                        PC[15:8] <= PC[15:8] - 2'b01;
                                 end
                                 PC[7:0] <= PCAdder[7:0];
                             end
@@ -686,14 +686,14 @@ module T65(
                     
                     // not really nice, but no better way found yet !
                     if (Set_Addr_To_r == T_Set_Addr_To_Set_Addr_To_PBR | Set_Addr_To_r == T_Set_Addr_To_Set_Addr_To_ZPG)
-                        BusB_r <= ((DI[7:0]) + 1);		// required for SHA
+                        BusB_r <= ((DI[7:0]) + 2'b01);		// required for SHA
                     
                     case (BAAdd)
                         2'b01 :
                             begin
                                 // BA Inc
-                                AD <= (AD + 1);
-                                BAL <= (BAL + 1);
+                                AD <= (AD + 2'b01);
+                                BAL <= (BAL + 2'b01);
                             end
                         2'b10 :
                             // BA Add
@@ -704,9 +704,9 @@ module T65(
                                 // Handle quirks with some undocumented opcodes crossing page boundary
                                 case (BAQuirk)
                                     2'b00 :		// no quirk
-                                        BAH <= (BAH + 1);
+                                        BAH <= (BAH + 2'b01);
                                     2'b01 :
-                                        BAH <= (BAH + 1) & DO_r;
+                                        BAH <= (BAH + 2'b01) & DO_r;
                                     2'b10 :
                                         BAH <= DO_r;
                                     default :
@@ -833,7 +833,7 @@ module T65(
                             IRQCycle <= 1'b1;
                     end
                     else
-                        MCycle <= (MCycle + 1);
+                        MCycle <= (MCycle + 2'b01);
                 end
                 //detect NMI even if not rdy    
                 if (NMI_n_o == 1'b1 & (NMI_n == 1'b0 & (IR[4:0] != 5'b10000 | Jump != 2'b01)))		// branches have influence on NMI start (not best way yet, though - but works...)

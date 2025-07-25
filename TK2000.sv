@@ -208,8 +208,8 @@ assign VIDEO_ARY = 3; //(!ar) ? 12'd3 : 12'd0;
 
 `include "build_id.v" 
 localparam CONF_STR = {
-	//"TK2000;;",
-	"Apple-II;;",
+	"TK2000;;",
+	//"Apple-II;;",
 	"-;",
 	"O89,Aspect ratio,Original,Full Screen,[ARC1],[ARC2];",
 	"O2,TV Mode,NTSC,PAL;",
@@ -220,7 +220,6 @@ localparam CONF_STR = {
 	"S1,NIBDSKDO PO ;",
 	"OA,Disk Rom,On,Off;",
 	"OB,Color Mode,On,Off;",
-	"OC,VERILOG2,A,Left;",
 	"-;",
 	"R0,Reset;",
 	"J,Fire 1,Fire 2;",
@@ -500,9 +499,7 @@ tk2000 tk2000 (
     .per_addr_o(per_addr_s),
     .per_data_from_i(per_data_from_s),
     .per_data_to_o(per_data_to_s),
-	 
-	 .keyhack(status[12]),
-	 
+	 	 
     // Debug
     .D_cpu_pc_o(D_cpu_pc_s)
 	
@@ -541,7 +538,7 @@ keyboard #(.clkfreq_g(14000)) kb (
     end
  
  //generate a slower clock for the keyboard
-    div_s <= div_s + 1;
+    div_s <= div_s + 2'b01;
     clk_kbd_s <= div_s[1];
     // 7 mhz
   end
@@ -561,13 +558,13 @@ vga_controller_appleii vga (
     .CLK_14M(clock_14_s),
     .VIDEO(video_bit_s),
     .COLOR_LINE(COLOR_LINE_CONTROL),
-	.SCREEN_MODE(status[6:5]),
+    .SCREEN_MODE(status[6:5]),
     .HBL(video_hbl_s),
     .VBL(video_vbl_s),
     .VGA_HS(video_hsync_n_s),
     .VGA_VS(video_vsync_n_s),
-	.VGA_HBL(HBlank),
-	.VGA_VBL(VBlank),
+    .VGA_HBL(HBlank),
+    .VGA_VBL(VBlank),
 	 
     .VGA_R(video_r_s),
     .VGA_G(video_g_s),
@@ -754,7 +751,7 @@ wire joy1_p9_i= ~joy1[5];
       if(flash_clk[22] == 1'b1) begin
         por_reset_s <= 1'b0;
       end
-      flash_clk <= flash_clk + 1;
+      flash_clk <= flash_clk + 2'b01;
     end
   end
 

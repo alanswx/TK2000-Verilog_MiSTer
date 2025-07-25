@@ -96,7 +96,7 @@ module disk_ii(CLK_14M, CLK_2M, PHASE_ZERO, IO_SELECT, DEVICE_SELECT, RESET, DIS
       begin
          if (spindown_delay != 0)
          begin
-            spindown_delay = spindown_delay - 1;
+            spindown_delay = spindown_delay - 2'b01;
             if (spindown_delay == 0)
                drive_real_on <= 1'b0;
          end
