@@ -1,3 +1,4 @@
+`default_nettype none
 //============================================================================
 //
 //  This program is free software; you can redistribute it and/or modify it
@@ -201,7 +202,7 @@ assign LED_USER  = led;
 assign LED_DISK  = 0;
 assign LED_POWER = 0;
 
-wire [1:0] ar = status[9:8];
+//wire [1:0] ar = status[9:8];
 
 assign VIDEO_ARX = 4; //(!ar) ? 12'd4 : (ar - 1'd1);
 assign VIDEO_ARY = 3; //(!ar) ? 12'd3 : 12'd0;
@@ -211,15 +212,15 @@ localparam CONF_STR = {
 	"TK2000;;",
 	//"Apple-II;;",
 	"-;",
-	"O89,Aspect ratio,Original,Full Screen,[ARC1],[ARC2];",
-	"O2,TV Mode,NTSC,PAL;",
-	"O34,Noise,White,Red,Green,Blue;",
+//	"O89,Aspect ratio,Original,Full Screen,[ARC1],[ARC2];",
+//	"O2,TV Mode,NTSC,PAL;",
+//	"O34,Noise,White,Red,Green,Blue;",
 	"O56,Display,Color,B&W,Green,Amber;",
 	"-;",
 	"S0,NIBDSKDO PO ;",
 	"S1,NIBDSKDO PO ;",
 	"OA,Disk Rom,On,Off;",
-	"OB,Color Mode,On,Off;",
+//	"OB,Color Mode,On,Off;",
 	"-;",
 	"R0,Reset;",
 	"J,Fire 1,Fire 2;",
@@ -306,7 +307,6 @@ pll pll
 	.locked(pll_locked_s)
 );
     
-wire reset = RESET | status[0] | buttons[1];
 
 
 wire HBlank;
@@ -337,9 +337,6 @@ wire phi2_s;        // phase 2
 wire clock_2M_s;       // Clock Q3
 wire clock_dvi_s;
 
-wire clk_kbd_s;
-wire [2:0] div_s;
-
 
 // Resets
 wire pll_locked_s;
@@ -349,8 +346,6 @@ wire reset_s;
 // ROM
 wire [13:0] rom_addr_s;
 wire [7:0] rom_data_from_s;
-//--  signal rom_oe_s         : std_logic;
-//--  signal rom_we_s         : std_logic;
 
 // RAM
 wire [15:0] ram_addr_s;
@@ -402,44 +397,11 @@ wire disk1_en_s;
 wire disk2_en_s;
 wire [13:0] track_ram_addr_s;
 wire [7:0] track_ram_data_s;
-wire track_ram_we_s;  // OSD
-wire osd_pixel_s;
-wire [4:0] osd_green_s;  // OSD byte signal
-wire btn_up_s ;
-wire btn_down_s  ;
-wire [15:0] D_cpu_pc_s;  //
-wire [3:0] color_index;
-wire [1:0] scanlines_en_s;
-wire [4:0] vga_r_s;
-wire [4:0] vga_g_s;
-wire [4:0] vga_b_s;
-wire [4:0] osd_r_s;
-wire [4:0] osd_g_s;
-wire [4:0] osd_b_s;
-wire [9:0] vga_x_s;
-wire [9:0] vga_y_s;
+
 reg [22:0] flash_clk = 1'b0;
-wire [31:0] menu_status;
-wire odd_line_s;
-wire step_sound_s;
 reg [5:0] kbd_joy_s;  // Data pump
 reg pump_active_s = 1'b0  ;
-wire sram_we_s ;
 
-wire [18:0] sram_addr_s ;
-wire [7:0] sram_data_s;
-wire [18:0] disk_addr_s;
-wire [7:0] disk_data_s ;
-wire [7:0] pcm_out_s;  // HDMI
-wire [9:0] tdms_r_s;
-wire [9:0] tdms_g_s;
-wire [9:0] tdms_b_s;
-wire [3:0] tdms_p_s;
-wire [3:0] tdms_n_s;  
-// SDISKII
-wire [3:0] motor_phase_s ;
-wire drive_en_s;
-wire rd_pulse_s;
 
 
 tk2000 tk2000 (
@@ -498,12 +460,7 @@ tk2000 tk2000 (
     .dev_select_n_o(per_devsel_n_s),
     .per_addr_o(per_addr_s),
     .per_data_from_i(per_data_from_s),
-    .per_data_to_o(per_data_to_s),
-	 	 
-    // Debug
-    .D_cpu_pc_o(D_cpu_pc_s)
-	
-
+    .per_data_to_o(per_data_to_s)
 	
 );
 
@@ -530,17 +487,13 @@ keyboard #(.clkfreq_g(14000)) kb (
     if((kbd_rows_s[6] == 1'b1 && joy1_up_i == 1'b0) || (kbd_rows_s[5] == 1'b1 && joy1_down_i == 1'b0) || (kbd_rows_s[4] == 1'b1 && joy1_right_i == 1'b0) || (kbd_rows_s[3] == 1'b1 && joy1_left_i == 1'b0)) begin
       kbd_joy_s <= kbd_joy_s | 6'b000001;
     end
-    if((kbd_rows_s[7] == 1'b1 && joy1_p6_i == 1'b0) /*|| (kbd_rows_s[6] == 1'b1 && joy1_p9_i == 1'b0)*/) begin
+    if((kbd_rows_s[7] == 1'b1 && joy1_p6_i == 1'b0) || (kbd_rows_s[6] == 1'b1 && joy1_p9_i == 1'b0)) begin
       kbd_joy_s <= kbd_joy_s | 6'b010000;
     end
-    if( (kbd_rows_s[1] == 1'b1 && joy1_p9_i == 1'b0)) begin
-      kbd_joy_s <= kbd_joy_s | 6'b100000;
-    end
+//    if( (kbd_rows_s[1] == 1'b1 && joy1_p9_i == 1'b0)) begin
+//      kbd_joy_s <= kbd_joy_s | 6'b100000;
+//    end
  
- //generate a slower clock for the keyboard
-    div_s <= div_s + 2'b01;
-    clk_kbd_s <= div_s[1];
-    // 7 mhz
   end
     
 // ROM
@@ -729,18 +682,11 @@ wire joy1_p9_i= ~joy1[5];
 
 
       
-  assign scanlines_en_s = 2'b00;
 
  // Glue Logic
   // In the Apple ][, this was a 555 timer
   always @(posedge clock_14_s) begin
     reset_s <= por_reset_s |RESET |  buttons[1] | status[0];
-	 /*
-    if((btn_n_i[4] == 1'b0 && btn_n_i[3] == 1'b0) || menu_status[0] == 1'b1 || pump_active_s == 1'b1) begin
-      por_reset_s <= 1'b1;
-      flash_clk <= {23{1'b0}};
-    end
-    else*/ 
 	 
 	 if(buttons[1] || status[0] || RESET || pump_active_s == 1'b1) begin
       por_reset_s <= 1'b1;

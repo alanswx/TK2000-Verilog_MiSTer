@@ -1,3 +1,5 @@
+`default_nettype none
+
 //
 // Multicore 2 / Multicore 2+
 //
@@ -96,16 +98,13 @@ module tk2000 (
     output dev_select_n_o,             // Sai 0 se acesso em $C09x
     output [7:0] per_addr_o,           // Address bus
     input wire [7:0] per_data_from_i,
-    output [7:0] per_data_to_o,
-    // Debug
-    output [15:0] D_cpu_pc_o
+    output [7:0] per_data_to_o
 );
 
     // Component declaration (assuming T65, timing_generator, and video_generator are separate modules)
     // You would typically include these modules as separate .v files in your project.
 
     // T65 CPU
-    wire cpu_clock_s;
     wire [23:0] cpu_addr_s;
     wire [7:0] cpu_di_s;
     wire [7:0] cpu_dout_s;
@@ -231,8 +230,6 @@ module tk2000 (
         .vsync_n    (video_vsync_n_o)
     );
 
-    // CPU clock assignment
-    assign cpu_clock_s = t_phi1_s;
 
     // ROM (16K)
     assign rom_addr_o = cpu_addr_s[13:0];
@@ -450,10 +447,6 @@ module tk2000 (
     end
     assign cas_o = cas_o_s;
 
-    // Debug output (D_cpu_pc_o) is not directly driven in the VHDL but assigned to 'open' from cpu6502 debugPc.
-    // In Verilog, if 'debugPc' is an output from T65, you would connect it directly.
-    // For now, it's left as an output port.
-    // D_cpu_pc_o is assumed to be an output from the CPU instance (T65 in this case)
 
 endmodule
 
