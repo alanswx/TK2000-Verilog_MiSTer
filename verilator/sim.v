@@ -338,13 +338,8 @@ tk2000 tk2000 (
     .dev_select_n_o(per_devsel_n_s),
     .per_addr_o(per_addr_s),
     .per_data_from_i(per_data_from_s),
-    .per_data_to_o(per_data_to_s),
+    .per_data_to_o(per_data_to_s)
 	 
-    // Debug
-    .D_cpu_pc_o(D_cpu_pc_s)
-	
-
-	
 );
 
 

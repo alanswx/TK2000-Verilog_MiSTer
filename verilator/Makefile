@@ -58,8 +58,8 @@ V_SRC = \
 	$(RTL)/t65/t65_alu.v  $(RTL)/t65/t65_mcode.v  $(RTL)/t65/t65_pack.v  $(RTL)/t65/t65.v \
 	$(RTL)/tk2000.v \
 	$(RTL)/timing_generator.sv \
-	$(RTL)/shared/keyboard.sv \
-	$(RTL)/shared/keyscans.vh \
+	$(RTL)/keyboard.sv \
+	$(RTL)/keyscans.vh \
 	$(RTL)/peripheral/disk_ii.v \
 	$(RTL)/peripheral/drive_ii.v \
 	$(RTL)/peripheral/floppy_track.sv \

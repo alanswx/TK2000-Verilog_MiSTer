@@ -714,4 +714,5 @@ assign ram_we = por_reset_s == 1'b0 ? ram_we_s : 1'b1;
 assign ram_data = por_reset_s == 1'b0 ? ram_data_to_s : 8'b00000000;
 assign ram_addr = por_reset_s == 1'b0 ? ram_addr_s: 16'h3F4;//std_logic_vector(to_unsigned(1012,ram_addr'length)); -- $3F4
 
+
 endmodule
