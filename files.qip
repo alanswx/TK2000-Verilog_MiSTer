@@ -29,7 +29,5 @@ set_global_assignment -name SYSTEMVERILOG_FILE rtl/video/video_generator.sv
 #set_global_assignment -name VHDL_FILE rtl/video/vga_controller.vhd
 #set_global_assignment -name VHDL_FILE rtl/video/vga_controller_appleii.vhd
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/video/vga_controller_appleii.v
-#set_global_assignment -name VHDL_FILE rtl/osd/char_rom.vhd
-#set_global_assignment -name VHDL_FILE rtl/osd/osd_track.vhd
 set_global_assignment -name VHDL_FILE rtl/dpram.vhd
 set_global_assignment -name SYSTEMVERILOG_FILE TK2000.sv
